@@ -4,7 +4,11 @@ cptx is a wrapper of `sqlx` adjusted to Clean Architecture. it splits the transa
 
 ## How to use
 
-the example will be updated here : [github.com/iDevoid/stygis]("https://github.com/iDevoid/stygid")
+1. [the storage level](https://github.com/iDevoid/stygis/tree/main/internal/storage/persistence)
+2. [the business/usecase level](https://github.com/iDevoid/stygis/tree/main/internal/module/user)
+3. [the intiator/cmd level](https://github.com/iDevoid/stygis/tree/main/initiator)
+
+### source : https://github.com/iDevoid/stygis
 
 # Background
 
