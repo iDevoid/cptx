@@ -4,9 +4,9 @@ cptx is a wrapper of `sqlx` adjusted to Clean Architecture. it splits the transa
 
 ## How to use
 
-1. [the storage level](https://github.com/iDevoid/stygis/tree/main/internal/storage/persistence)
-2. [the business/usecase level](https://github.com/iDevoid/stygis/tree/main/internal/module/user)
-3. [the intiator/cmd level](https://github.com/iDevoid/stygis/tree/main/initiator)
+1. [the storage layer](https://github.com/iDevoid/stygis/tree/main/internal/storage/persistence)
+2. [the business/usecase layer](https://github.com/iDevoid/stygis/tree/main/internal/module/user)
+3. [the intiator/cmd layer](https://github.com/iDevoid/stygis/tree/main/initiator)
 
 ### source : https://github.com/iDevoid/stygis
 
@@ -28,7 +28,8 @@ this flow is the business flow, and it uses transaction. that's why business log
 3. I want to hold the principle of `no tech on business/usecase layer`
 
 ## did you know?
-if you have 5 layers of architecture 
+if you have 5 layers of architecture, and all accessed function from high to low level layer, you have at least 5 pointers of the same context. because the behavior of function parameter is copying the param, you have to have star (*) symbol before writing the type of param to give the pointer instead of copying to new pointer.
+Golang Garbage Collector is powerful enough to handle such a small things already. But deeply I am thinking about the habit of writing context as param for nothing is kinda sad. Context is useful, that's why I use the context as the "pipe" to bring the pointer of transaction to lower level layer without bring the technology to higher level layer.
 
 ## size in bytes
 since all of the operation fully runs on pointer, you don't have to worry about the memory usage.
