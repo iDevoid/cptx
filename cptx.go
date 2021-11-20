@@ -18,9 +18,9 @@ type connectionString struct {
 type ptxKey string
 type ptx *sqlx.Tx
 
-// Connections return the wrapped actions of postgres database
+// Connections return the wrapped actions of database
 type Connections interface {
-	Open() (Database, Transaction)
+	Open(driver string) (Database, Transaction)
 }
 
 // Database contains both main and replica of database
@@ -225,7 +225,7 @@ func (uh *uniqueHolder) Rollback() error {
 	return uh.tx.Rollback()
 }
 
-// Initialize is to initTx the postgres platform with connection string both main or replica.
+// Initialize is to initTx the database platform with connection string both main or replica.
 // use the main connection string if there's no replica database, both must be the same connection string.
 // never set it to empty string, it will cause the fatal and stops the entire app where the database is being initialize.
 func Initialize(main, replica, domain string) Connections {
@@ -240,13 +240,12 @@ func Initialize(main, replica, domain string) Connections {
 // you know, a good writing habit tho
 var stringType = "type"
 var stringConnection = "connection"
-var postgres = "postgres"
 
-// Open is creating the database postgres connections (main and replica) and special transaction level for repository layer
-func (cs *connectionString) Open() (Database, Transaction) {
+// Open is creating the database connections (main and replica) and special transaction level for repository layer
+func (cs *connectionString) Open(driver string) (Database, Transaction) {
 	// log fieds for logrus, no need to write this multiple times
 	logFields := logrus.Fields{
-		"platform": postgres,
+		"platform": driver,
 		"domain":   cs.domain,
 	}
 	logMainFields := logrus.Fields{
@@ -257,9 +256,9 @@ func (cs *connectionString) Open() (Database, Transaction) {
 		stringType:       "replica",
 		stringConnection: cs.replica,
 	}
-	logrus.WithFields(logFields).Info("Connecting to PostgreSQL DB")
+	logrus.WithFields(logFields).Info("Connecting to database")
 	logrus.WithFields(logFields).Info("Opening Connection to Main")
-	dbMain, err := sqlx.Open(postgres, cs.main)
+	dbMain, err := sqlx.Open(driver, cs.main)
 	if err != nil {
 		logrus.WithFields(logMainFields).Fatal(err)
 		panic(err)
@@ -270,7 +269,7 @@ func (cs *connectionString) Open() (Database, Transaction) {
 		panic(err)
 	}
 	logrus.WithFields(logFields).Info("Opening Connection to Replica")
-	dbReplica, err := sqlx.Open(postgres, cs.main)
+	dbReplica, err := sqlx.Open(driver, cs.main)
 	if err != nil {
 		logrus.WithFields(logReplicaFields).Fatal(err)
 		panic(err)
